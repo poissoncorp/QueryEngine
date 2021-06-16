@@ -12,7 +12,24 @@ public class Data
   //etc
 }
 ```
+We can use `QueryReadTools.ReadQueryFromConsole(bool slowMode)` method to grab a Query from the console.
+Slow mode format given below:
+```sql
+from Users
+where Age > 25 or Age < 60 and FullName = "Denis Ritchie"
+select Email
+```
+And the same query in the normal mode:
+```sql
+from Users where Age > 25 or Age < 60 and FullName = "Denis Ritchie" select Email
+```
 
-
-
-Ouput is given to the console.
+Ouput is given to the console. In this example using pre-initialized data inside Program.cs, the output should be
+```
+csharp31@ms.com
+----------------------------------------------------------------
+denix@rise.net
+----------------------------------------------------------------
+bugs@company.com
+----------------------------------------------------------------
+```

@@ -6,8 +6,8 @@ namespace QueryEngine
 {
     internal class Query
     {
-        public string Source { get; set; }
-        public ConditionsSet ConditionsSet { get; set; }
-        public List<string> Fields { get; set; }
+        public string Source { get; set; } //From
+        public ConditionsSet ConditionsSet { get; set; }  //Where
+        public List<string> Fields { get; set; }    //Select
     }
 }

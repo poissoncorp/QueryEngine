@@ -31,6 +31,7 @@ namespace QueryEngine
 
                 Conditions = new List<Condition>(from exp in expressions select new Condition(exp));
                 AndOr = new List<bool>(andOr);
+                return;
             }
 
             Conditions = new List<Condition>(new[] { new Condition(conditionStrings[0]) });

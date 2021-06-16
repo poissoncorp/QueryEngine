@@ -28,8 +28,8 @@ Ouput is given to the console. In this example using pre-initialized data inside
 ```
 csharp31@ms.com
 ----------------------------------------------------------------
-jobs@ravendb.net
+denix@rise.net
 ----------------------------------------------------------------
-jobs@hibernatingrhinos.com
+bugs@company.com
 ----------------------------------------------------------------
 ```

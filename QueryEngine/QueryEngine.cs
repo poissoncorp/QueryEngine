@@ -6,27 +6,34 @@ namespace QueryEngine
 {
     class QueryEngine
     {
-        public void RunConsoleQuery(Data data, Query query)
+        public Data Data { get; }
+
+        public QueryEngine(Data data)
         {
-            var table = (IEnumerable)data.GetType().GetField(query.Source)?.GetValue(data);             // -- Get type of the variable and look if there's field of given name
+            this.Data = data;
+        }
+
+        public void RunConsoleQuery(Query query)
+        {
+            var table = (IEnumerable)typeof(Data).GetField(query.Source)?.GetValue(Data);              // -- Take value of the field (Source - collection) of the Data object 
             Console.WriteLine();
-            foreach (object entry in table)                                                             // -- Take value of the field (collection) of the Data object passed in arguments
-                if (IsMatching(entry, query.ConditionsSet))                                             // -- If collection record field values fit
-                {
-                    foreach (var queryField in query.Fields)                                      //  given conditions, print selected fields
-                        Console.Write($"{entry.GetType().GetField(queryField)?.GetValue(entry)} ");
-                    Console.WriteLine($"\n{new string('-',64)}");
-                }
-            
+            if (table != null)
+                foreach (object entry in table)
+                    if (IsMatching(entry, query.ConditionsSet))
+                    {
+                        // -- If record fields values fit given conditions
+                        foreach (var queryField in query.Fields) //  -- Print selected fields
+                            Console.Write($"{entry.GetType().GetField(queryField)?.GetValue(entry)} ");
+                        Console.WriteLine($"\n{new string('-', 64)}");
+                    }
         }
 
         private bool IsMatching(object entry, ConditionsSet set)
         {
-            //Grouping "and" groups separated with "or" keywords
-
-            var tupleList =  new List<(int start, int end)>(set.AndOr.Count);
-            var start = 0;
-            var end=0;
+            //Grouping "and" logical product groups, that are separated with "or" keywords
+            var tupleList =  new List<(int start, int end)>(set.AndOr.Count); 
+            var start = 0; 
+            int end;
             for (var i = 0; i < set.AndOr.Count; i++)
             {
                 if (!set.AndOr[i])
@@ -35,12 +42,10 @@ namespace QueryEngine
                     tupleList.Add((start, end));
                     start = i+1;
                 }
-                
             }
             end = set.AndOr.Count;
-            tupleList.Add((start, end));
-
-            foreach (var valueTuple in tupleList)
+            tupleList.Add((start, end));            //List of (start,end) Tuples indicating AND separated conditions groups
+            foreach (var valueTuple in tupleList)   //If entry will pass any AND group return true
             {
                 var smallSuccess = true;
                 for (var i = valueTuple.start; i <= valueTuple.end; i++)

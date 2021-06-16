@@ -2,10 +2,18 @@
 
 namespace QueryEngine
 {
-    internal class Query
+    public abstract class Query
     {
         public string Source { get; set; } //From
-        public ConditionsSet ConditionsSet { get; set; }  //Where
         public List<string> Fields { get; set; }    //Select
+    }
+
+    public class SingleConditionalQuery:Query
+    {
+        public Condition Condition { get; set; }  //Where
+    }
+    public class MultiConditionalQuery:Query
+    {
+        public ConditionsSet ConditionsSet { get; set; }  //Where
     }
 }

@@ -4,8 +4,12 @@ using System.Text.RegularExpressions;
 
 namespace QueryEngine
 {
-    internal class Condition
+    public class Condition
     {
+        public string Field { get; set; }
+        public string Operator { get; set; }
+        public string Value { get; set; }
+
         public Condition(string conditionString) //conditionString is a three-part sequence - [field] [operator] [value] e.g. Age > 20
         {
             List<string> parts = new List<string>(Regex.Split(conditionString, "(>=)|(<=)|(<>)|(=)|(>)|(<)|(LIKE)|(BETWEEN)",
@@ -15,11 +19,8 @@ namespace QueryEngine
             string valueString = parts[2].Trim();
             Value = valueString[0] == '"' || valueString[0] == '\'' ? valueString.Substring(1, valueString.Length - 2) : valueString;
         }
-        public string Field { get; set; }
-        public string Operator { get; set; }
-        public string Value { get; set; }
-
-        internal bool Check(object entry)
+       
+        public bool Check(object entry)
         {
             string fieldValue = entry.GetType().GetField(Field)?.GetValue(entry)?.ToString();
             if (fieldValue == null) return false;

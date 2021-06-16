@@ -7,29 +7,28 @@ namespace QueryEngine
 {
     public static class QueryReadTools
     {
-        internal static Query ReadQueryFromConsole(bool slowMode)
+        internal static Query ReadQueryFromConsole(bool SlowMode)
         {
-            if (slowMode)
+            string from, where, select;
+            if (SlowMode)
             {
-                return new Query()
-                {
-                    Source = Console.ReadLine()?[5..],
-                    ConditionsSet = new ConditionsSet(Console.ReadLine()?[6..]),
-                    Fields = new List<string>(from fieldStr in Console.ReadLine()?[7..].Split(",")
-                        select fieldStr.Trim())
-                };
+                from = Console.ReadLine()?[5..];
+                where = Console.ReadLine()?[6..];
+                select = Console.ReadLine()?[7..];
+                
             }
-            
-            string input = Console.ReadLine();
-            if (input == null) throw new FormatException();
-            string[] split = Regex.Split(input, "(From)|(Where)|(Select)", RegexOptions.IgnoreCase);
-            return new Query
+            else
             {
-                Source = split[2].Trim(),
-                ConditionsSet = new ConditionsSet(split[4]),
-                Fields = new List<string>(from fieldStr in (split[6]).Split(",") select fieldStr.Trim()) // -- Split given string with ',' delimiter
-            };                                                                                                        // -- And put the result to the List
+                string input = Console.ReadLine();
+                if (input == null) throw new FormatException();
+                string[] split = Regex.Split(input, "(From)|(Where)|(Select)", RegexOptions.IgnoreCase);
+                from = split[2].Trim();
+                where = split[4].Trim();
+                select = split[6].Trim();
+            }
+            return QueryFactory.Create(from, where, select);
         }
+        
 
         //Read Query from .txt etc...
     }

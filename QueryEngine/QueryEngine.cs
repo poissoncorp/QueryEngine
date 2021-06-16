@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace QueryEngine
 {
-    class QueryEngine
+    public class QueryEngine
     {
-        public Data Data { get; }
+        public Data Data { get; set; }
 
         public QueryEngine(Data data)
         {
@@ -18,16 +18,28 @@ namespace QueryEngine
             var table = (IEnumerable)typeof(Data).GetField(query.Source)?.GetValue(Data);              // -- Take value of the field (Source - collection) of the Data object 
             Console.WriteLine();
             if (table != null)
-                foreach (object entry in table)
-                    if (IsMatching(entry, query.ConditionsSet))
+            {
+                foreach (var entry in table)    //entry is a single Entity in the fetched table
+                {
+                    var isMatched = (query is MultiConditionalQuery)
+                        ? IsMatching(entry, (query as MultiConditionalQuery).ConditionsSet)
+                        : IsMatching(entry, (query as SingleConditionalQuery).Condition);
+
+                    if (isMatched)
                     {
                         // -- If record fields values fit given conditions
                         foreach (var queryField in query.Fields) //  -- Print selected fields
                             Console.Write($"{entry.GetType().GetField(queryField)?.GetValue(entry)} ");
                         Console.WriteLine($"\n{new string('-', 64)}");
                     }
+                }
+            }
         }
 
+        private bool IsMatching(object entry, Condition condition)
+        {
+            return condition.Check(entry);
+        }
         private bool IsMatching(object entry, ConditionsSet set)
         {
             //Grouping "and" logical product groups, that are separated with "or" keywords
@@ -60,5 +72,6 @@ namespace QueryEngine
             }
             return false;
         }
+       
     }
 }

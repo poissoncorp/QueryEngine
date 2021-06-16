@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace QueryEngine
 {
-    class ConditionsSet
+    public class ConditionsSet
     {
         public List<Condition> Conditions { get; set; }
         public List<bool> AndOr { get; set; }
@@ -12,27 +12,18 @@ namespace QueryEngine
         public ConditionsSet(string conditionsString)
         {
             string[] conditionStrings = Regex.Split(conditionsString, "( Or )|( And )", RegexOptions.IgnoreCase);
-
-            if (conditionStrings.Length > 1)
+            string[] expressions = new string[conditionStrings.Length / 2 + 1];
+            bool[] andOr = new bool[conditionStrings.Length / 2]; // Not implementing an enum - I just have two possibilities - OR/AND, OR = false, AND = true, bool is ok
+            for (int i = 0; i < conditionStrings.Length; i++)
             {
-                string[] expressions = new string[conditionStrings.Length / 2 + 1];
-                bool[] andOr = new bool[conditionStrings.Length / 2]; // Didn't declare an enum - I just have two possibilities - OR/AND, OR = false, AND = true 
-                for (int i = 0; i < conditionStrings.Length; i++)
-                {
-                    if (i % 2 != 0)
-                        andOr[i / 2] = Regex.IsMatch(conditionStrings[i].Trim(), "(AND)", RegexOptions.IgnoreCase);
-                    else
-                        expressions[i / 2] = conditionStrings[i];
-                }
-
-                Conditions = new List<Condition>(from exp in expressions select new Condition(exp));
-                AndOr = new List<bool>(andOr);
-                return;
+                if (i % 2 != 0) 
+                    andOr[i / 2] = Regex.IsMatch(conditionStrings[i].Trim(), "(AND)", RegexOptions.IgnoreCase);
+                else
+                    expressions[i / 2] = conditionStrings[i];
             }
-
-            Conditions = new List<Condition>(new[] { new Condition(conditionStrings[0]) });
-            AndOr = new List<bool>();
+            Conditions = new List<Condition>(from exp in expressions select new Condition(exp));
+            AndOr = new List<bool>(andOr); 
         }
-
     }
+
 }

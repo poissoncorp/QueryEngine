@@ -8,7 +8,7 @@ namespace QueryEngine
     {
         public static Query Create(string fromStr, string whereStr, string selectStr)
         {
-            if (Regex.Split(whereStr, "( Or )|( And )").Length > 2)
+            if (Regex.Split(whereStr, "( Or )|( And )",RegexOptions.IgnoreCase).Length > 2)
             {
                 return new MultiConditionalQuery()
                 {
